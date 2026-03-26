@@ -219,6 +219,7 @@ PassPluginLibraryInfo getChaosAndroidPluginInfo() {
                     MPM.addPass(chaos_android::AntiDebug());
                     MPM.addPass(chaos_android::AntiRoot());
                     MPM.addPass(chaos_android::AntiTamper());
+                    MPM.addPass(chaos_android::IRVirtualization());
                     MPM.addPass(chaos_android::Cleaning());
                     return true;
                   });

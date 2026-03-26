@@ -37,6 +37,7 @@ struct YamlProtectionConfig {
   bool AntiDebug = false;
   bool AntiRoot = false;
   bool AntiTamper = false;
+  bool IRVirtualization = false;
 
   // Exclude/include lists
   std::vector<std::string> Exclude;

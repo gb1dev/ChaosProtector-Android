@@ -62,9 +62,13 @@ It manipulates LLVM IR, not raw ARM64 instructions. LLVM handles all architectur
 - [ ] Resource Encryption: encrypt assets in APK, decrypt at runtime
 
 ### Phase 3: IR Virtualization (Killer Feature)
-- [ ] Convert LLVM IR basic blocks to custom VM bytecode
-- [ ] Embed ARM64 VM interpreter in the .so
-- [ ] Per-function virtualization (selective)
+- [x] VM opcode set designed (60+ opcodes: stack ops, arithmetic, bitwise, comparisons, memory, control flow, calls, type conversions, floating point)
+- [x] IR-to-bytecode compiler (converts LLVM IR to VM bytecode, supports all common instruction types)
+- [x] VM interpreter emitted as LLVM IR (embedded in target .so, ~40 basic blocks)
+- [x] Per-function virtualization via YAML include/exclude lists
+- [x] Tested: add, multiply, fibonacci, gcd, sort_array, bit_reverse, popcount all pass individually
+- [ ] Fix multi-function virtualization (stack/memory issue when >2 functions virtualized simultaneously)
+- [ ] Opcode randomization (polymorphic VM - different opcodes per build)
 - [ ] This is the feature NO other LLVM-based obfuscator has
 
 ### Phase 4: DEX Protection

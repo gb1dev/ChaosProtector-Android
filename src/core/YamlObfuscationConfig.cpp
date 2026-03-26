@@ -262,6 +262,8 @@ bool parseYamlProtectionConfig(const std::string &Path,
           Out.AntiRoot = Val;
         else if (PName == "anti_tamper")
           Out.AntiTamper = Val;
+        else if (PName == "ir_virtualization")
+          Out.IRVirtualization = Val;
         else
           SWARN("Unknown protection: {}", PName.str());
       }

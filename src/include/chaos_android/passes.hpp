@@ -23,3 +23,4 @@
 #include "chaos_android/passes/anti-debug/AntiDebug.hpp"
 #include "chaos_android/passes/anti-root/AntiRoot.hpp"
 #include "chaos_android/passes/anti-tamper/AntiTamper.hpp"
+#include "chaos_android/passes/ir-virtualization/IRVirtualization.hpp"
