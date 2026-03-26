@@ -202,6 +202,17 @@ bool IRCompiler::emitFCmp(FCmpInst &I) {
 }
 
 bool IRCompiler::emitLoad(LoadInst &I) {
+  // If loading from an alloca, use LOAD_LOCAL instead of memory load
+  if (isa<AllocaInst>(I.getPointerOperand())) {
+    emitOp(OP_LOAD_LOCAL);
+    emit16(getLocalIndex(I.getPointerOperand()));
+    pushStack();
+    emitOp(OP_STORE_LOCAL);
+    emit16(getLocalIndex(&I));
+    popStack();
+    return true;
+  }
+
   emitPushValue(I.getPointerOperand());
 
   unsigned BitWidth = I.getType()->isPointerTy()
@@ -229,6 +240,15 @@ bool IRCompiler::emitLoad(LoadInst &I) {
 }
 
 bool IRCompiler::emitStore(StoreInst &I) {
+  // If storing to an alloca, use STORE_LOCAL instead of memory store
+  if (isa<AllocaInst>(I.getPointerOperand())) {
+    emitPushValue(I.getValueOperand());
+    emitOp(OP_STORE_LOCAL);
+    emit16(getLocalIndex(I.getPointerOperand()));
+    popStack();
+    return true;
+  }
+
   emitPushValue(I.getPointerOperand());
   emitPushValue(I.getValueOperand());
 
@@ -253,25 +273,60 @@ bool IRCompiler::emitAlloca(AllocaInst &I) {
   return true;
 }
 
+// Emit stores for PHI nodes in the target basic block that come from the current BB
+void IRCompiler::emitPhiResolution(BasicBlock *CurrentBB, BasicBlock *TargetBB) {
+  for (auto &I : *TargetBB) {
+    auto *PHI = dyn_cast<PHINode>(&I);
+    if (!PHI)
+      break; // PHIs are always at the beginning
+    Value *IncomingVal = PHI->getIncomingValueForBlock(CurrentBB);
+    if (IncomingVal) {
+      emitPushValue(IncomingVal);
+      emitOp(OP_STORE_LOCAL);
+      emit16(getLocalIndex(PHI));
+      popStack();
+    }
+  }
+}
+
 bool IRCompiler::emitBranch(BranchInst &I) {
+  BasicBlock *CurrentBB = I.getParent();
+
   if (I.isUnconditional()) {
+    // Resolve PHIs in target before branching
+    emitPhiResolution(CurrentBB, I.getSuccessor(0));
     emitOp(OP_BR);
     size_t PatchLoc = Code.size();
     emit32(0); // placeholder
     UnresolvedBranches.push_back({PatchLoc, I.getSuccessor(0)});
   } else {
     emitPushValue(I.getCondition());
+
+    // For conditional branches, we need to emit phi resolution for BOTH targets.
+    // We use BR_COND to jump to a "true path" that resolves phis and then jumps,
+    // and fall through to a "false path" that does the same.
+
+    // True path: resolve phis for successor 0, then branch
     emitOp(OP_BR_COND);
-    size_t PatchTrue = Code.size();
-    emit32(0); // placeholder for true target
+    size_t PatchTrueResolve = Code.size();
+    emit32(0); // placeholder for true phi resolution code
     popStack();
 
+    // False path (inline): resolve phis for successor 1, then branch
+    emitPhiResolution(CurrentBB, I.getSuccessor(1));
     emitOp(OP_BR);
     size_t PatchFalse = Code.size();
-    emit32(0); // placeholder for false target
-
-    UnresolvedBranches.push_back({PatchTrue, I.getSuccessor(0)});
+    emit32(0);
     UnresolvedBranches.push_back({PatchFalse, I.getSuccessor(1)});
+
+    // True phi resolution code (branched to from BR_COND)
+    uint32_t TrueResolveOffset = Code.size();
+    patchBranch(PatchTrueResolve, TrueResolveOffset);
+    emitPhiResolution(CurrentBB, I.getSuccessor(0));
+    emitOp(OP_BR);
+    size_t PatchTrue = Code.size();
+    emit32(0);
+    UnresolvedBranches.push_back({PatchTrue, I.getSuccessor(0)});
   }
   return true;
 }

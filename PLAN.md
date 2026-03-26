@@ -72,10 +72,11 @@ It manipulates LLVM IR, not raw ARM64 instructions. LLVM handles all architectur
 - [ ] This is the feature NO other LLVM-based obfuscator has
 
 ### Phase 4: DEX Protection
-- [ ] Integrate BlackObfuscator (Apache 2.0) for Java/Kotlin
-- [ ] Control flow flattening on DEX bytecode
-- [ ] String encryption in DEX
-- [ ] Unified Gradle plugin: native + DEX in one step
+- [x] String encryption in DEX (XOR + position cipher + Base64, ASM library)
+- [x] Control flow flattening on DEX bytecode (state-machine dispatcher)
+- [x] DexProtector module with CLI + library API
+- [x] Unified Gradle plugin: native + DEX protections in one DSL
+- [ ] Full integration testing with real Android APK
 
 ## Build Targets
 

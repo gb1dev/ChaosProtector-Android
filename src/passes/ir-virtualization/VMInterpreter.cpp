@@ -39,10 +39,11 @@ Function *emitVMInterpreter(Module &M) {
 
   // Signature: i64 __chaos_vm_interpret(ptr bytecode, ptr args, i32 nargs)
   auto *FnTy = FunctionType::get(Int64Ty, {PtrTy, PtrTy, Int32Ty}, false);
-  auto *Fn = Function::Create(FnTy, GlobalValue::InternalLinkage,
+  auto *Fn = Function::Create(FnTy, GlobalValue::ExternalLinkage,
                               "__chaos_vm_interpret", M);
   Fn->addFnAttr(Attribute::NoInline);
   Fn->addFnAttr(Attribute::NoUnwind);
+  Fn->addFnAttr(Attribute::OptimizeNone); // Prevent LLVM from optimizing the interpreter
 
   auto *Bytecode = Fn->getArg(0);
   auto *Args = Fn->getArg(1);

@@ -44,6 +44,7 @@ private:
   bool emitCast(llvm::CastInst &I);
   bool emitSelect(llvm::SelectInst &I);
   bool emitPHI(llvm::PHINode &I);
+  void emitPhiResolution(llvm::BasicBlock *CurrentBB, llvm::BasicBlock *TargetBB);
 
   // Push a value reference onto the virtual stack
   void emitPushValue(llvm::Value *V);

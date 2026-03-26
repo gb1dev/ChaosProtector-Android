@@ -41,4 +41,16 @@ open class ProtectionConfig @Inject constructor(objects: ObjectFactory) {
     val basicBlockDuplicate: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
     val functionOutline: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
     val opaqueFieldAccess: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
+
+    // Phase 2 passes (native)
+    val antiDebug: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
+    val antiRoot: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
+    val antiTamper: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
+
+    // Phase 3 (native)
+    val irVirtualization: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
+
+    // Phase 4: DEX protection (Java/Kotlin)
+    val dexStringEncryption: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
+    val dexControlFlowFlattening: Property<Boolean> = objects.property(Boolean::class.java).convention(false)
 }

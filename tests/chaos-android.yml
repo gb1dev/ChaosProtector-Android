@@ -1,6 +1,5 @@
 protections:
-  ir_virtualization: true
+  arithmetic: true
 license_key: CP-TEST-0000-0000-0000
-include:
-  - add
-  - multiply
+exclude:
+  - main
