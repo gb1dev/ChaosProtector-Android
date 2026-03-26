@@ -33,12 +33,11 @@ class StringEncryptor(private val key: Int = 0x5A3C_9E7F.toInt()) {
                     if (original.length < 3) continue // Skip very short strings
 
                     val encrypted = encrypt(original)
-                    val encodedKey = key xor original.length
 
                     // Replace: ldc "string" -> invokestatic ChaosDecryptor.d(encBytes, key)
                     val newInsns = InsnList()
                     newInsns.add(LdcInsnNode(encrypted))
-                    newInsns.add(LdcInsnNode(encodedKey))
+                    newInsns.add(LdcInsnNode(key))
                     newInsns.add(MethodInsnNode(
                         Opcodes.INVOKESTATIC,
                         classNode.name + "\$ChaosDecryptor",
