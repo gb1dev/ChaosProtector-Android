@@ -256,6 +256,12 @@ bool parseYamlProtectionConfig(const std::string &Path,
           Out.FunctionOutline = Val;
         else if (PName == "opaque_field_access")
           Out.OpaqueFieldAccess = Val;
+        else if (PName == "anti_debug")
+          Out.AntiDebug = Val;
+        else if (PName == "anti_root")
+          Out.AntiRoot = Val;
+        else if (PName == "anti_tamper")
+          Out.AntiTamper = Val;
         else
           SWARN("Unknown protection: {}", PName.str());
       }

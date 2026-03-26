@@ -20,3 +20,6 @@
 #include "chaos_android/passes/opaque-constants/OpaqueConstants.hpp"
 #include "chaos_android/passes/opaque-field-access/OpaqueFieldAccess.hpp"
 #include "chaos_android/passes/string-encoding/StringEncoding.hpp"
+#include "chaos_android/passes/anti-debug/AntiDebug.hpp"
+#include "chaos_android/passes/anti-root/AntiRoot.hpp"
+#include "chaos_android/passes/anti-tamper/AntiTamper.hpp"

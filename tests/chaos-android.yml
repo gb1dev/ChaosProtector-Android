@@ -1,20 +1,12 @@
-# Test config - Pro tier protections (safe for x86_64 testing)
 protections:
   string_encryption: true
   control_flow_flattening: true
-  opaque_constants: true
   arithmetic: true
-  anti_hook: false
-  indirect_branch: true
-  indirect_call: true
-  break_control_flow: true
-  basic_block_duplicate: false
-  function_outline: false
-  opaque_field_access: false
+  anti_debug: true
+  anti_root: true
+  anti_tamper: true
 
 license_key: CP-TEST-0000-0000-0000
 
 exclude:
-  - "main"
-
-probability: 50
+  - main

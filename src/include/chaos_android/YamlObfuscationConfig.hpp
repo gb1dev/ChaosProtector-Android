@@ -33,6 +33,11 @@ struct YamlProtectionConfig {
   bool FunctionOutline = false;
   bool OpaqueFieldAccess = false;
 
+  // Phase 2 passes
+  bool AntiDebug = false;
+  bool AntiRoot = false;
+  bool AntiTamper = false;
+
   // Exclude/include lists
   std::vector<std::string> Exclude;
   std::vector<std::string> Include;

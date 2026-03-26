@@ -56,9 +56,9 @@ It manipulates LLVM IR, not raw ARM64 instructions. LLVM handles all architectur
 - [ ] Build for Windows x64 + macOS ARM64
 
 ### Phase 2: New Passes
-- [ ] Anti-Tamper: CRC32 integrity check of .text at runtime
-- [ ] Enhanced Anti-Debug: ptrace detection, /proc/self/status check, TracerPid
-- [ ] Anti-Root: detect rooted devices (su, Magisk, etc.)
+- [x] Enhanced Anti-Debug: ptrace syscall + /proc/self/status TracerPid check
+- [x] Anti-Root: 20 root paths (su, Magisk, SuperSU) + SELinux permissive check
+- [x] Anti-Tamper: /proc/self/maps scan for Frida/Xposed/Substrate injection
 - [ ] Resource Encryption: encrypt assets in APK, decrypt at runtime
 
 ### Phase 3: IR Virtualization (Killer Feature)
