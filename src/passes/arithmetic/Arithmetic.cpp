@@ -279,6 +279,9 @@ bool Arithmetic::runOnBasicBlock(BasicBlock &BB) {
   for (const auto &[F, Round] : ToObfuscate) {
     for (BasicBlock &BB : *F) {
       for (size_t Idx = 0; Idx < Round; ++Idx) {
+        // Collect replacements first, then apply (don't modify while iterating)
+        SmallVector<std::pair<Instruction *, Instruction *>> Replacements;
+
         for (Instruction &I : BB) {
           if (getObf(I, MetaObfTy::OpaqueCst))
             continue;
@@ -289,17 +292,17 @@ bool Arithmetic::runOnBasicBlock(BasicBlock &BB) {
           if (!Result || Result == &I)
             continue;
 
-          SINFO("[{}][{}] Replacing {} with {}", name(), F->getName(),
-                I.getOpcodeName(), Result->getName());
-
-          BasicBlock *InstParent = I.getParent();
-          BasicBlock::iterator InsertPos = I.getIterator();
-
           Result->copyMetadata(
               I, {LLVMContext::MD_dbg, LLVMContext::MD_annotation});
           Result->takeName(&I);
-          Result->insertInto(InstParent, InsertPos);
-          I.replaceAllUsesWith(Result);
+          Replacements.push_back({&I, Result});
+        }
+
+        // Apply replacements
+        for (auto &[Old, New] : Replacements) {
+          New->insertInto(Old->getParent(), Old->getIterator());
+          Old->replaceAllUsesWith(New);
+          Old->eraseFromParent();
         }
       }
     }

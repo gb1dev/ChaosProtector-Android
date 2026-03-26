@@ -1,15 +1,10 @@
 protections:
-  string_encryption: true
   control_flow_flattening: true
   opaque_constants: true
-  indirect_branch: true
-  anti_debug: true
-  anti_root: true
-  anti_tamper: true
   ir_virtualization: true
 license_key: CP-TEST-0000-0000-0000
 include:
   - add
+  - multiply
   - fibonacci
-exclude:
-  - get_secret
+  - gcd

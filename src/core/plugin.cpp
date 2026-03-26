@@ -33,6 +33,14 @@ static bool UseYamlOnly = false;
 static std::unique_ptr<chaos_android::YamlObfuscationConfig> g_YamlCfg;
 static std::string FoundYamlPath;
 
+// Global protection enable flags (checked by passes that need explicit enable)
+namespace chaos_android {
+  bool g_EnableAntiDebug = false;
+  bool g_EnableAntiRoot = false;
+  bool g_EnableAntiTamper = false;
+  bool g_EnableIRVirtualization = false;
+}
+
 template <> struct yaml::MappingTraits<chaos_android::YamlConfig> {
   static void mapping(IO &IO, chaos_android::YamlConfig &Config) {
     IO.mapOptional("PYTHONPATH", Config.PythonPath, "");
@@ -168,6 +176,12 @@ static void initializePluginOnce() {
       auto Tier = chaos_android::LicenseValidator::validate(ProtCfg.LicenseKey);
       chaos_android::LicenseValidator::applyTierRestrictions(ProtCfg, Tier);
       ProtCfg.Tier = Tier;
+
+      // Set global protection enable flags
+      chaos_android::g_EnableAntiDebug = ProtCfg.AntiDebug;
+      chaos_android::g_EnableAntiRoot = ProtCfg.AntiRoot;
+      chaos_android::g_EnableAntiTamper = ProtCfg.AntiTamper;
+      chaos_android::g_EnableIRVirtualization = ProtCfg.IRVirtualization;
 
       g_YamlCfg =
           std::make_unique<chaos_android::YamlObfuscationConfig>(ProtCfg);

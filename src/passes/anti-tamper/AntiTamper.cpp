@@ -31,6 +31,7 @@
 
 #include "chaos_android/PyConfig.hpp"
 #include "chaos_android/log.hpp"
+#include "chaos_android/ProtectionFlags.hpp"
 #include "chaos_android/passes/anti-tamper/AntiTamper.hpp"
 #include "chaos_android/utils.hpp"
 
@@ -203,7 +204,7 @@ bool AntiTamper::runOnModule(Module &M) {
 }
 
 PreservedAnalyses AntiTamper::run(Module &M, ModuleAnalysisManager &FAM) {
-  if (isModuleGloballyExcluded(&M)) {
+  if (isModuleGloballyExcluded(&M) || !g_EnableAntiTamper) {
     return PreservedAnalyses::all();
   }
 

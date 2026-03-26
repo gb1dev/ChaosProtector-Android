@@ -20,6 +20,7 @@
 
 #include "chaos_android/PyConfig.hpp"
 #include "chaos_android/log.hpp"
+#include "chaos_android/ProtectionFlags.hpp"
 #include "chaos_android/passes/anti-debug/AntiDebug.hpp"
 #include "chaos_android/utils.hpp"
 
@@ -205,32 +206,11 @@ bool AntiDebug::runOnModule(Module &M) {
 }
 
 PreservedAnalyses AntiDebug::run(Module &M, ModuleAnalysisManager &FAM) {
-  if (isModuleGloballyExcluded(&M)) {
-    SINFO("Excluding module [{}]", M.getName());
+  if (isModuleGloballyExcluded(&M) || !g_EnableAntiDebug) {
     return PreservedAnalyses::all();
   }
 
-  PyConfig &Config = PyConfig::instance();
   SINFO("[{}] Executing on module {}", name(), M.getName());
-
-  // Check if anti-debug is enabled in config
-  // We check any function to see if anti-debug is requested
-  bool Enabled = false;
-  for (Function &F : M) {
-    if (F.isDeclaration() || F.empty())
-      continue;
-    auto *UserCfg = Config.getUserConfig();
-    // Use the antiHooking config as proxy for anti-debug
-    // (will be replaced with dedicated antiDebug config method)
-    Enabled = true;
-    break;
-  }
-
-  if (!Enabled) {
-    SINFO("[{}] No functions to protect", name());
-    return PreservedAnalyses::all();
-  }
-
   bool Changed = runOnModule(M);
 
   SINFO("[{}] Changes {} applied on module {}", name(), Changed ? "" : "not",

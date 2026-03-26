@@ -22,6 +22,7 @@
 
 #include "chaos_android/PyConfig.hpp"
 #include "chaos_android/log.hpp"
+#include "chaos_android/ProtectionFlags.hpp"
 #include "chaos_android/passes/anti-root/AntiRoot.hpp"
 #include "chaos_android/utils.hpp"
 
@@ -215,7 +216,7 @@ bool AntiRoot::runOnModule(Module &M) {
 }
 
 PreservedAnalyses AntiRoot::run(Module &M, ModuleAnalysisManager &FAM) {
-  if (isModuleGloballyExcluded(&M)) {
+  if (isModuleGloballyExcluded(&M) || !g_EnableAntiRoot) {
     return PreservedAnalyses::all();
   }
 

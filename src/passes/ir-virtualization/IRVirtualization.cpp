@@ -15,6 +15,7 @@
 #include "llvm/IR/Module.h"
 
 #include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/ProtectionFlags.hpp"
 #include "chaos_android/PyConfig.hpp"
 #include "chaos_android/log.hpp"
 #include "chaos_android/passes/ir-virtualization/IRCompiler.hpp"
@@ -140,7 +141,7 @@ bool IRVirtualization::virtualizeFunction(Function &F, Module &M) {
 
 PreservedAnalyses IRVirtualization::run(Module &M,
                                          ModuleAnalysisManager &FAM) {
-  if (isModuleGloballyExcluded(&M)) {
+  if (isModuleGloballyExcluded(&M) || !g_EnableIRVirtualization) {
     return PreservedAnalyses::all();
   }
 
