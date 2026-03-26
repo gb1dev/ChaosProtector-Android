@@ -3,13 +3,13 @@
 // details.
 //
 
-#include "omvll/log.hpp"
+#include "chaos_android/log.hpp"
 
 #include "init.hpp"
 
 namespace py = pybind11;
 
-namespace omvll {
+namespace chaos_android {
 
 py::module_ &py_init_log(py::module_ &m) {
   py::enum_<LogLevel>(m, "LogLevel")
@@ -23,4 +23,4 @@ py::module_ &py_init_log(py::module_ &m) {
   return m;
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

@@ -7,7 +7,7 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Module.h"
 
-#include "omvll/utils.hpp"
+#include "chaos_android/utils.hpp"
 
 #include "init.hpp"
 
@@ -15,7 +15,7 @@ namespace py = pybind11;
 
 using namespace pybind11::literals;
 
-namespace omvll {
+namespace chaos_android {
 
 py::module_ &py_init_llvm_bindings(py::module_ &m) {
   py::class_<llvm::StructType>(m, "Struct",
@@ -118,4 +118,4 @@ py::module_ &py_init_llvm_bindings(py::module_ &m) {
   return m;
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

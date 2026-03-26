@@ -7,9 +7,9 @@
 
 #include <mutex>
 
-#include "omvll/ObfuscationConfig.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
 
-namespace omvll {
+namespace chaos_android {
 
 class PyObfuscationConfig : public ObfuscationConfig {
   using ObfuscationConfig::ObfuscationConfig;
@@ -62,4 +62,4 @@ private:
   std::once_flag OverridesReportDiffChecked;
 };
 
-} // end namespace omvll
+} // end namespace chaos_android

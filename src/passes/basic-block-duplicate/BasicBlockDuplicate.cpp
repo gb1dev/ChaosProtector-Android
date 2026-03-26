@@ -13,19 +13,19 @@
 #include "llvm/Transforms/Utils/SSAUpdater.h"
 #include "llvm/Transforms/Utils/ValueMapper.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/log.hpp"
-#include "omvll/passes/basic-block-duplicate/BasicBlockDuplicate.hpp"
-#include "omvll/passes/basic-block-duplicate/BasicBlockDuplicateOpt.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/basic-block-duplicate/BasicBlockDuplicate.hpp"
+#include "chaos_android/passes/basic-block-duplicate/BasicBlockDuplicateOpt.hpp"
+#include "chaos_android/utils.hpp"
 
 using namespace llvm;
-using namespace omvll;
+using namespace chaos_android;
 
-namespace omvll {
+namespace chaos_android {
 
-static constexpr auto CoinflipFunctionName = "__omvll_coinflip";
+static constexpr auto CoinflipFunctionName = "__chaos_coinflip";
 static constexpr auto LRand48FunctionName = "lrand48";
 
 bool BasicBlockDuplicate::process(Function &F, LLVMContext &Ctx,
@@ -65,7 +65,7 @@ bool BasicBlockDuplicate::process(Function &F, LLVMContext &Ctx,
     // Drop original basic block terminator.
     BB->getTerminator()->eraseFromParent();
 
-    // Branch on __omvll_coinflip result.
+    // Branch on __chaos_coinflip result.
     Builder.SetInsertPoint(BB);
     Value *Cond = Builder.CreateCall(CoinflipCallee, {});
     Builder.CreateCondBr(Cond, NewBB, OldBB);
@@ -188,7 +188,7 @@ PreservedAnalyses BasicBlockDuplicate::run(Module &M,
 
     auto *P = std::get_if<BasicBlockDuplicateWithProbability>(&Opt);
     if (P && !isFunctionGloballyExcluded(&F) && !F.isDeclaration() &&
-        !F.isIntrinsic() && !F.getName().starts_with("__omvll"))
+        !F.isIntrinsic() && !F.getName().starts_with("__chaos"))
       Changed |= process(F, Ctx, P->Probability);
   }
 
@@ -198,4 +198,4 @@ PreservedAnalyses BasicBlockDuplicate::run(Module &M,
   return Changed ? PreservedAnalyses::none() : PreservedAnalyses::all();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

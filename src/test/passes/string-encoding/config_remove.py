@@ -1,7 +1,7 @@
-import omvll
+import chaos_android
 from functools import lru_cache
 
-class MyConfig(omvll.ObfuscationConfig):
+class MyConfig(chaos_android.ObfuscationConfig):
     def __init__(self):
         super().__init__()
     def obfuscate_string(self, _, __, string: bytes):
@@ -9,5 +9,5 @@ class MyConfig(omvll.ObfuscationConfig):
             return "REDACTED"
 
 @lru_cache(maxsize=1)
-def omvll_get_config() -> omvll.ObfuscationConfig:
+def chaos_get_config() -> chaos_android.ObfuscationConfig:
     return MyConfig()

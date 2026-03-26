@@ -12,19 +12,19 @@
 #include "llvm/IR/NoFolder.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/log.hpp"
-#include "omvll/passes/Metadata.hpp"
-#include "omvll/passes/opaque-constants/OpaqueConstants.hpp"
-#include "omvll/utils.hpp"
-#include "omvll/visitvariant.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/Metadata.hpp"
+#include "chaos_android/passes/opaque-constants/OpaqueConstants.hpp"
+#include "chaos_android/utils.hpp"
+#include "chaos_android/visitvariant.hpp"
 
 #include "GenOpaque.hpp"
 
 using namespace llvm;
 
-namespace omvll {
+namespace chaos_android {
 
 inline bool isEligible(const Instruction &I) {
   return isa<LoadInst>(I) || isa<StoreInst>(I) || isa<BinaryOperator>(I) ||
@@ -134,14 +134,14 @@ Value *OpaqueConstants::getOpaqueCst(Instruction &I, OpaqueContext &Ctx,
 bool OpaqueConstants::process(Instruction &I, OpaqueConstantsOpt *Opt) {
   bool Changed = false;
 
-#ifdef OMVLL_DEBUG
+#ifdef CHAOS_ANDROID_DEBUG
   std::string InstStr = ToString(I);
 #endif
   for (Use &Op : I.operands())
     if (auto *CI = dyn_cast<ConstantInt>(Op))
       Changed |= process(I, Op, *CI, Opt);
 
-#ifdef OMVLL_DEBUG
+#ifdef CHAOS_ANDROID_DEBUG
   if (Changed)
     SDEBUG("[{}] Opaquize constant in instruction {}", name(), InstStr);
 #endif
@@ -205,7 +205,7 @@ PreservedAnalyses OpaqueConstants::run(Module &M, ModuleAnalysisManager &FAM) {
 
   for (Function &F : M) {
     if (isFunctionGloballyExcluded(&F) || F.isDeclaration() ||
-        F.isIntrinsic() || F.getName().starts_with("__omvll"))
+        F.isIntrinsic() || F.getName().starts_with("__chaos"))
       continue;
 
     OpaqueConstantsOpt Opt = Config.getUserConfig()->obfuscateConstants(&M, &F);
@@ -231,4 +231,4 @@ PreservedAnalyses OpaqueConstants::run(Module &M, ModuleAnalysisManager &FAM) {
   return Changed ? PreservedAnalyses::none() : PreservedAnalyses::all();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

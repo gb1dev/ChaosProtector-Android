@@ -15,15 +15,15 @@
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 #include "llvm/Transforms/Utils/Local.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/log.hpp"
-#include "omvll/passes/cfg-flattening/ControlFlowFlattening.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/cfg-flattening/ControlFlowFlattening.hpp"
+#include "chaos_android/utils.hpp"
 
 using namespace llvm;
 
-namespace omvll {
+namespace chaos_android {
 
 constexpr uint32_t Encode(uint32_t Id, uint32_t X, uint32_t Y) {
   return (Id ^ X) + Y;
@@ -222,7 +222,7 @@ bool ControlFlowFlattening::runOnFunction(Function &F) {
           EntryBlock->splitBasicBlockBefore(Branch, "EntrySplit");
       FlattedBBs.insert(FlattedBBs.begin(), EntryBlock);
 
-#ifdef OMVLL_DEBUG
+#ifdef CHAOS_ANDROID_DEBUG
         for (Instruction &I : *EntrySplit) {
           SDEBUG("[{}][EntrySplit] {}", ControlFlowFlattening::name(),
                  ToString(I));
@@ -478,7 +478,7 @@ PreservedAnalyses ControlFlowFlattening::run(Module &M,
     if (isFunctionGloballyExcluded(&F) ||
         !Config.getUserConfig()->controlFlowGraphFlattening(&M, &F) ||
         F.isDeclaration() || F.isIntrinsic() ||
-        F.getName().starts_with("__omvll"))
+        F.getName().starts_with("__chaos"))
       continue;
 
     if (isCoroutine(&F))
@@ -497,4 +497,4 @@ PreservedAnalyses ControlFlowFlattening::run(Module &M,
   return Changed ? PreservedAnalyses::none() : PreservedAnalyses::all();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

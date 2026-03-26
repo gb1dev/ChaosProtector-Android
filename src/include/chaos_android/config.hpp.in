@@ -1,0 +1,33 @@
+#pragma once
+
+//
+// ChaosProtector Android - LLVM-based obfuscation for Android native code
+// Based on O-MVLL (Apache 2.0)
+//
+
+#cmakedefine ChaosAndroid_DEBUG  @ChaosAndroid_DEBUG@
+#cmakedefine01 ChaosAndroid_PY_STANDALONE
+
+// Map to generic macro names for source code
+#ifdef ChaosAndroid_DEBUG
+#define CHAOS_ANDROID_DEBUG 1
+#endif
+
+#if ChaosAndroid_PY_STANDALONE
+#define CHAOS_ANDROID_PY_STANDALONE 1
+#else
+#define CHAOS_ANDROID_PY_STANDALONE 0
+#endif
+
+#define CHAOS_ANDROID_VERSION "@ChaosAndroid_VERSION_MAJOR@.@ChaosAndroid_VERSION_MINOR@.@ChaosAndroid_VERSION_PATCH@"
+#define CHAOS_ANDROID_TAGGED @ChaosAndroid_IS_TAGGED@
+#define CHAOS_ANDROID_TAG    "@ChaosAndroid_GIT_TAG@"
+#define CHAOS_ANDROID_COMMIT "@ChaosAndroid_COMMIT_HASH@"
+
+static constexpr bool is_py_standalone = CHAOS_ANDROID_PY_STANDALONE;
+
+#ifdef CHAOS_ANDROID_DEBUG
+static constexpr bool is_debug = true;
+#else
+static constexpr bool is_debug = false;
+#endif

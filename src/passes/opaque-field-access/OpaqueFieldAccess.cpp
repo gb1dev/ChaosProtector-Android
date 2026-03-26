@@ -10,17 +10,17 @@
 #include "llvm/IR/NoFolder.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/log.hpp"
-#include "omvll/passes/Metadata.hpp"
-#include "omvll/passes/opaque-constants/OpaqueConstants.hpp"
-#include "omvll/passes/opaque-field-access/OpaqueFieldAccess.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/Metadata.hpp"
+#include "chaos_android/passes/opaque-constants/OpaqueConstants.hpp"
+#include "chaos_android/passes/opaque-field-access/OpaqueFieldAccess.hpp"
+#include "chaos_android/utils.hpp"
 
 using namespace llvm;
 
-namespace omvll {
+namespace chaos_android {
 
 bool OpaqueFieldAccess::runOnStructRead(BasicBlock &BB, LoadInst &Load,
                                         GetElementPtrInst &GEP, StructType &S) {
@@ -383,4 +383,4 @@ PreservedAnalyses OpaqueFieldAccess::run(Module &M,
   return Changed ? PreservedAnalyses::none() : PreservedAnalyses::all();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

@@ -9,23 +9,23 @@
 #include "llvm/IR/PatternMatch.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/log.hpp"
-#include "omvll/passes/Metadata.hpp"
-#include "omvll/passes/arithmetic/Arithmetic.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/Metadata.hpp"
+#include "chaos_android/passes/arithmetic/Arithmetic.hpp"
+#include "chaos_android/utils.hpp"
 
 using namespace llvm;
 using namespace PatternMatch;
 
-static constexpr auto MBAFunctionName = "__omvll_mba";
+static constexpr auto MBAFunctionName = "__chaos_mba";
 
 // This flag can be used for disabling the inlining of the MBA function wrappers
 // (mostly for debugging).
 static constexpr bool ShouldInline = true;
 
-namespace omvll {
+namespace chaos_android {
 
 // LLVM's InstVisitor to pattern match and replace arithmetic operations with
 // MBA The current MBA are take from sspam:
@@ -225,7 +225,7 @@ bool Arithmetic::runOnBasicBlock(BasicBlock &BB) {
   SmallVector<Instruction *> ToErase;
   MapVector<Function *, size_t> ToObfuscate;
   for (Instruction &I : BB) {
-    // First, check if there is O-MVLL metadata associated with the current
+    // First, check if there is ChaosProtector Android metadata associated with the current
     // instruction. If it is the case, access the number of iterations.
     size_t Rounds = 0;
     if (auto MO = getObf(I, MetaObfTy::OpaqueOp)) {
@@ -350,4 +350,4 @@ PreservedAnalyses Arithmetic::run(Module &M, ModuleAnalysisManager &FAM) {
   return ModuleChanges.report();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

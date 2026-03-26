@@ -13,11 +13,11 @@
 #include "llvm/IR/Module.h"
 #include "llvm/Support/FileSystem.h"
 
-#include "omvll/PyConfig.hpp"
-#include "omvll/log.hpp"
-#include "omvll/omvll_config.hpp"
-#include "omvll/utils.hpp"
-#include "omvll/versioning.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/chaos_config.hpp"
+#include "chaos_android/utils.hpp"
+#include "chaos_android/versioning.hpp"
 
 #include "PyObfuscationConfig.hpp"
 #include "init.hpp"
@@ -26,7 +26,7 @@ namespace py = pybind11;
 
 using namespace pybind11::literals;
 
-namespace omvll {
+namespace chaos_android {
 
 void initPythonpath() {
   if (!PyConfig::YConfig.PythonPath.empty()) {
@@ -57,21 +57,21 @@ void initPythonpath() {
 #endif
 }
 
-void OMVLLCtor(py::module_ &m) {
+void ChaosAndroidCtor(py::module_ &m) {
   initDefaultConfig();
 
-  m.attr("LLVM_VERSION")  = OMVLL_LLVM_VERSION_STRING;
-  m.attr("OMVLL_VERSION") = OMVLL_VERSION;
-  m.attr("OMVLL_VERSION_FULL") = "OMVLL Version: " OMVLL_VERSION " / " OMVLL_LLVM_VERSION_STRING
-                                 " (" OMVLL_LLVM_VERSION ")";
+  m.attr("LLVM_VERSION")  = CHAOS_ANDROID_LLVM_VERSION_STRING;
+  m.attr("CHAOS_ANDROID_VERSION") = CHAOS_ANDROID_VERSION;
+  m.attr("CHAOS_ANDROID_VERSION_FULL") = "CHAOS_ANDROID Version: " CHAOS_ANDROID_VERSION " / " CHAOS_ANDROID_LLVM_VERSION_STRING
+                                 " (" CHAOS_ANDROID_LLVM_VERSION ")";
 
-  py::class_<OMVLLConfig>(m, "OMVLLConfig",
+  py::class_<ChaosConfig>(m, "ChaosConfig",
                           R"delim(
-    This class is used to configure the global behavior of O-MVLL.
+    This class is used to configure the global behavior of ChaosProtector Android.
 
-    It can be accessed through the global :attr:`omvll.config` attribute
+    It can be accessed through the global :attr:`chaos_android.config` attribute
     )delim")
-      .def_readwrite("passes", &OMVLLConfig::Passes,
+      .def_readwrite("passes", &ChaosConfig::Passes,
                      R"delim(
                    This **ordered** list contains the sequence of the obfuscation passes
                    that must be used.
@@ -79,11 +79,11 @@ void OMVLLCtor(py::module_ &m) {
 
                    This attribute is set by default to these values:
 
-                   |omvll-passes|
+                   |chaos-android-passes|
 
                    )delim")
 
-      .def_readwrite("inline_jni_wrappers", &OMVLLConfig::InlineJniWrappers,
+      .def_readwrite("inline_jni_wrappers", &ChaosConfig::InlineJniWrappers,
                      R"delim(
                    This boolean attribute is used to force inlining JNI C++ wrapper.
                    For instance ``GetStringChars``:
@@ -96,7 +96,7 @@ void OMVLLCtor(py::module_ &m) {
                    The default value is ``True``.
                    )delim")
 
-      .def_readwrite("shuffle_functions", &OMVLLConfig::ShuffleFunctions,
+      .def_readwrite("shuffle_functions", &ChaosConfig::ShuffleFunctions,
                      R"delim(
                     Whether the postition of Module's functions should be shuffled.
 
@@ -122,7 +122,7 @@ void OMVLLCtor(py::module_ &m) {
                     If this value is set to ``True`` (which is the default value), the sequence is randomized.
                     )delim")
 
-      .def_readwrite("global_mod_exclude", &OMVLLConfig::GlobalModuleExclude,
+      .def_readwrite("global_mod_exclude", &ChaosConfig::GlobalModuleExclude,
                      R"delim(
                     This attribute is a list of strings used to exclude entire modules from obfuscation.
                     Each entry in the list can be a partial or full match of the module's name.
@@ -132,7 +132,7 @@ void OMVLLCtor(py::module_ &m) {
                     By default, this list is empty.
                     )delim")
 
-      .def_readwrite("global_func_exclude", &OMVLLConfig::GlobalFunctionExclude,
+      .def_readwrite("global_func_exclude", &ChaosConfig::GlobalFunctionExclude,
                      R"delim(
                     This attribute is a list of strings used to exclude specific functions from obfuscation.
                     When a function is excluded, none of the obfuscation passes will be applied to it.
@@ -140,7 +140,7 @@ void OMVLLCtor(py::module_ &m) {
                     By default, this list is empty.
                     )delim")
 
-      .def_readwrite("probability_seed", &OMVLLConfig::ProbabilitySeed,
+      .def_readwrite("probability_seed", &ChaosConfig::ProbabilitySeed,
                      R"delim(
                     probability_seed is a configurable value used to initialize the random number generator.
                     Whenever a random value is required during the obfuscation process,
@@ -149,7 +149,7 @@ void OMVLLCtor(py::module_ &m) {
                     The default value is 1.
                     )delim")
 
-      .def_readwrite("output_folder", &OMVLLConfig::OutputFolder,
+      .def_readwrite("output_folder", &ChaosConfig::OutputFolder,
                      R"delim(
                     Output directory where o-mvll stores processed files (e.g., log files).
 
@@ -173,23 +173,23 @@ void OMVLLCtor(py::module_ &m) {
            R"delim(
          The default user-callback used to configure strings obfuscation.
 
-         In addition to the associated class options, O-MVLL interprets these return values as follows:
+         In addition to the associated class options, ChaosProtector Android interprets these return values as follows:
 
          +--------------+-------------------------------------+
          | Return Value | Interpretation                      |
          +==============+=====================================+
-         | ``None``     | :class:`~omvll.StringEncOptSkip`    |
+         | ``None``     | :class:`~chaos_android.StringEncOptSkip`    |
          +--------------+-------------------------------------+
-         | ``False``    | :class:`~omvll.StringEncOptSkip`    |
+         | ``False``    | :class:`~chaos_android.StringEncOptSkip`    |
          +--------------+-------------------------------------+
-         | ``True``     | :class:`~omvll.StringEncOptDefault` |
+         | ``True``     | :class:`~chaos_android.StringEncOptDefault` |
          +--------------+-------------------------------------+
-         | ``str``      | :class:`~omvll.StringEncOptReplace` |
+         | ``str``      | :class:`~chaos_android.StringEncOptReplace` |
          +--------------+-------------------------------------+
-         | ``bytes``    | :class:`~omvll.StringEncOptReplace` |
+         | ``bytes``    | :class:`~chaos_android.StringEncOptReplace` |
          +--------------+-------------------------------------+
 
-         See the :omvll:`strings-encoding` documentation.
+         See the :chaos_android:`strings-encoding` documentation.
          )delim",
            "module"_a, "function"_a, "string"_a)
 
@@ -198,19 +198,19 @@ void OMVLLCtor(py::module_ &m) {
          The default user-callback for the pass that breaks
          the control flow.
 
-         In addition to the associated class options, O-MVLL interprets these return values as follows:
+         In addition to the associated class options, ChaosProtector Android interprets these return values as follows:
 
          +--------------+-------------------------------------------------+
          | Return Value | Interpretation                                  |
          +==============+=================================================+
-         | ``True``     | :class:`~omvll.BreakControlFlowOpt`\(``True``)  |
+         | ``True``     | :class:`~chaos_android.BreakControlFlowOpt`\(``True``)  |
          +--------------+-------------------------------------------------+
-         | ``False``    | :class:`~omvll.BreakControlFlowOpt`\(``False``) |
+         | ``False``    | :class:`~chaos_android.BreakControlFlowOpt`\(``False``) |
          +--------------+-------------------------------------------------+
-         | ``None``     | :class:`~omvll.BreakControlFlowOpt`\(``False``) |
+         | ``None``     | :class:`~chaos_android.BreakControlFlowOpt`\(``False``) |
          +--------------+-------------------------------------------------+
 
-         See the :omvll:`control-flow-breaking` documentation.
+         See the :chaos_android:`control-flow-breaking` documentation.
          )delim",
            "module"_a, "function"_a)
 
@@ -219,19 +219,19 @@ void OMVLLCtor(py::module_ &m) {
          The default user-callback used to configure the
          control-flow flattening pass.
 
-         In addition to the associated class options, O-MVLL interprets these return values as follows:
+         In addition to the associated class options, ChaosProtector Android interprets these return values as follows:
 
          +--------------+------------------------------------------------------+
          | Return Value | Interpretation                                       |
          +==============+======================================================+
-         | ``True``     | :class:`~omvll.ControlFlowFlatteningOpt`\(``True``)  |
+         | ``True``     | :class:`~chaos_android.ControlFlowFlatteningOpt`\(``True``)  |
          +--------------+------------------------------------------------------+
-         | ``False``    | :class:`~omvll.ControlFlowFlatteningOpt`\(``False``) |
+         | ``False``    | :class:`~chaos_android.ControlFlowFlatteningOpt`\(``False``) |
          +--------------+------------------------------------------------------+
-         | ``None``     | :class:`~omvll.ControlFlowFlatteningOpt`\(``False``) |
+         | ``None``     | :class:`~chaos_android.ControlFlowFlatteningOpt`\(``False``) |
          +--------------+------------------------------------------------------+
 
-         See the :omvll:`control-flow-flattening` documentation.
+         See the :chaos_android:`control-flow-flattening` documentation.
          )delim",
            "module"_a, "function"_a)
 
@@ -239,19 +239,19 @@ void OMVLLCtor(py::module_ &m) {
            R"delim(
          The default user-callback when obfuscating structures accesses.
 
-         In addition to the associated class options, O-MVLL interprets these return values as follows:
+         In addition to the associated class options, ChaosProtector Android interprets these return values as follows:
 
          +--------------+---------------------------------------------+
          | Return Value | Interpretation                              |
          +==============+=============================================+
-         | ``True``     | :class:`~omvll.StructAccessOpt`\(``True``)  |
+         | ``True``     | :class:`~chaos_android.StructAccessOpt`\(``True``)  |
          +--------------+---------------------------------------------+
-         | ``False``    | :class:`~omvll.StructAccessOpt`\(``False``) |
+         | ``False``    | :class:`~chaos_android.StructAccessOpt`\(``False``) |
          +--------------+---------------------------------------------+
-         | ``None``     | :class:`~omvll.StructAccessOpt`\(``False``) |
+         | ``None``     | :class:`~chaos_android.StructAccessOpt`\(``False``) |
          +--------------+---------------------------------------------+
 
-         See the :omvll:`opaque-fields-access` documentation.
+         See the :chaos_android:`opaque-fields-access` documentation.
          )delim",
            "module"_a, "function"_a, "struct"_a)
 
@@ -260,19 +260,19 @@ void OMVLLCtor(py::module_ &m) {
            R"delim(
          The default user-callback when obfuscating global variables access.
 
-         In addition to the associated class options, O-MVLL interprets these return values as follows:
+         In addition to the associated class options, ChaosProtector Android interprets these return values as follows:
 
          +--------------+------------------------------------------+
          | Return Value | Interpretation                           |
          +==============+==========================================+
-         | ``True``     | :class:`~omvll.VarAccessOpt`\(``True``)  |
+         | ``True``     | :class:`~chaos_android.VarAccessOpt`\(``True``)  |
          +--------------+------------------------------------------+
-         | ``False``    | :class:`~omvll.VarAccessOpt`\(``False``) |
+         | ``False``    | :class:`~chaos_android.VarAccessOpt`\(``False``) |
          +--------------+------------------------------------------+
-         | ``None``     | :class:`~omvll.VarAccessOpt`\(``False``) |
+         | ``None``     | :class:`~chaos_android.VarAccessOpt`\(``False``) |
          +--------------+------------------------------------------+
 
-         See the :omvll:`opaque-fields-access` documentation.
+         See the :chaos_android:`opaque-fields-access` documentation.
          )delim",
            "module"_a, "function"_a, "variable"_a)
 
@@ -280,21 +280,21 @@ void OMVLLCtor(py::module_ &m) {
            R"delim(
          The default user-callback to obfuscate constants.
 
-         In addition to the associated class options, O-MVLL interprets these return values as follows:
+         In addition to the associated class options, ChaosProtector Android interprets these return values as follows:
 
          +-------------------+--------------------------------------------------------+
          | Return Value      | Interpretation                                         |
          +===================+========================================================+
-         | ``True``          | :class:`~omvll.OpaqueConstantsBool`\(``True``)         |
+         | ``True``          | :class:`~chaos_android.OpaqueConstantsBool`\(``True``)         |
          +-------------------+--------------------------------------------------------+
-         | ``False``         | :class:`~omvll.OpaqueConstantsBool`\(``False``)        |
+         | ``False``         | :class:`~chaos_android.OpaqueConstantsBool`\(``False``)        |
          +-------------------+--------------------------------------------------------+
-         | ``None``          | :class:`~omvll.OpaqueConstantsBool`\(``False``)        |
+         | ``None``          | :class:`~chaos_android.OpaqueConstantsBool`\(``False``)        |
          +-------------------+--------------------------------------------------------+
-         | ``list(int ...)`` | :class:`~omvll.omvll.OpaqueConstantsSet`\(``int ...``) |
+         | ``list(int ...)`` | :class:`~chaos_android.omvll.OpaqueConstantsSet`\(``int ...``) |
          +-------------------+--------------------------------------------------------+
 
-         See the :omvll:`opaque-constants` documentation.
+         See the :chaos_android:`opaque-constants` documentation.
          )delim",
            "module"_a, "function"_a)
 
@@ -302,19 +302,19 @@ void OMVLLCtor(py::module_ &m) {
            R"delim(
          The default user-callback when obfuscating arithmetic operations.
 
-         In addition to the associated class options, O-MVLL interprets these return values as follows:
+         In addition to the associated class options, ChaosProtector Android interprets these return values as follows:
 
          +--------------+-------------------------------------------+
          | Return Value | Interpretation                            |
          +==============+===========================================+
-         | ``True``     | :class:`~omvll.ArithmeticOpt`\(``True``)  |
+         | ``True``     | :class:`~chaos_android.ArithmeticOpt`\(``True``)  |
          +--------------+-------------------------------------------+
-         | ``False``    | :class:`~omvll.ArithmeticOpt`\(``False``) |
+         | ``False``    | :class:`~chaos_android.ArithmeticOpt`\(``False``) |
          +--------------+-------------------------------------------+
-         | ``None``     | :class:`~omvll.ArithmeticOpt`\(``False``) |
+         | ``None``     | :class:`~chaos_android.ArithmeticOpt`\(``False``) |
          +--------------+-------------------------------------------+
 
-         See the :omvll:`arithmetic` documentation.
+         See the :chaos_android:`arithmetic` documentation.
          )delim",
            "module"_a, "function"_a)
 
@@ -322,19 +322,19 @@ void OMVLLCtor(py::module_ &m) {
            R"delim(
          The default user-callback to enable hooking protection.
 
-         In addition to the associated class options, O-MVLL interprets these return values as follows:
+         In addition to the associated class options, ChaosProtector Android interprets these return values as follows:
 
          +--------------+-----------------------------------------+
          | Return Value | Interpretation                          |
          +==============+=========================================+
-         | ``True``     | :class:`~omvll.AntiHookOpt`\(``True``)  |
+         | ``True``     | :class:`~chaos_android.AntiHookOpt`\(``True``)  |
          +--------------+-----------------------------------------+
-         | ``False``    | :class:`~omvll.AntiHookOpt`\(``False``) |
+         | ``False``    | :class:`~chaos_android.AntiHookOpt`\(``False``) |
          +--------------+-----------------------------------------+
-         | ``None``     | :class:`~omvll.AntiHookOpt`\(``False``) |
+         | ``None``     | :class:`~chaos_android.AntiHookOpt`\(``False``) |
          +--------------+-----------------------------------------+
 
-         See the :omvll:`anti-hook` documentation.
+         See the :chaos_android:`anti-hook` documentation.
          )delim",
            "module"_a, "function"_a)
 
@@ -377,11 +377,11 @@ void OMVLLCtor(py::module_ &m) {
            "FunctionIncludes"_a, "Probability"_a);
 }
 
-std::unique_ptr<py::module_> initOMVLLCore(py::dict Modules) {
+std::unique_ptr<py::module_> initChaosAndroidCore(py::dict Modules) {
   auto M = std::make_unique<py::module_>(
-      py::module_::create_extension_module("omvll", "", new PyModuleDef()));
-  OMVLLCtor(*M);
-  Modules["omvll"] = *M;
+      py::module_::create_extension_module("chaos_android", "", new PyModuleDef()));
+  ChaosAndroidCtor(*M);
+  Modules["chaos_android"] = *M;
   return M;
 }
 
@@ -393,14 +393,18 @@ PyConfig &PyConfig::instance() {
 }
 
 ObfuscationConfig *PyConfig::getUserConfig() {
+  // If YAML-only mode set an external config, use it directly
+  if (ExternalConfig)
+    return ExternalConfig;
+
   try {
     py::gil_scoped_acquire gil;
-    if (!py::hasattr(*Mod, "omvll_get_config"))
-      fatalError("Missing omvll_get_config");
+    if (!py::hasattr(*Mod, "chaos_get_config"))
+      fatalError("Missing chaos_get_config");
 
-    auto PyUserConfig = Mod->attr("omvll_get_config");
+    auto PyUserConfig = Mod->attr("chaos_get_config");
     if (PyUserConfig.is_none())
-      fatalError("Missing omvll_get_config");
+      fatalError("Missing chaos_get_config");
 
     py::object Result = PyUserConfig();
     return Result.cast<ObfuscationConfig *>();
@@ -410,6 +414,12 @@ ObfuscationConfig *PyConfig::getUserConfig() {
 }
 
 PyConfig::PyConfig() {
+  // In YAML-only mode, skip Python initialization entirely
+  if (ExternalConfig) {
+    SINFO("YAML-only mode: skipping Python initialization");
+    return;
+  }
+
   py::initialize_interpreter();
   // initialize_interpreter() already holds the GIL.
 
@@ -417,15 +427,15 @@ PyConfig::PyConfig() {
   py::module_ PathLib = py::module_::import("pathlib");
   py::dict Modules = SysMod.attr("modules");
 
-  CoreMod = initOMVLLCore(Modules);
+  CoreMod = initChaosAndroidCore(Modules);
 
   llvm::StringRef ConfigPath;
-  if (!PyConfig::YConfig.OMVLLConfig.empty())
-    ConfigPath = PyConfig::YConfig.OMVLLConfig;
+  if (!PyConfig::YConfig.ConfigPath.empty())
+    ConfigPath = PyConfig::YConfig.ConfigPath;
   else if (char *Config = getenv(EnvKey))
     ConfigPath = Config;
 
-  SINFO("Using OMVLL_CONFIG = {}", ConfigPath);
+  SINFO("Using CHAOS_ANDROID_CONFIG = {}", ConfigPath);
 
   std::string ModName = DefaultFileName;
   if (!ConfigPath.empty()) {
@@ -459,6 +469,6 @@ PyConfig::PyConfig() {
 
 std::string PyConfig::configPath() { return ModulePath; }
 
-} // end namespace omvll
+} // end namespace chaos_android
 
-PYBIND11_MODULE(omvll, m) { omvll::OMVLLCtor(m); }
+PYBIND11_MODULE(chaos_android, m) { chaos_android::ChaosAndroidCtor(m); }

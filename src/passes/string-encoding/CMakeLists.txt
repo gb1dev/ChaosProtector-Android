@@ -1,4 +1,4 @@
-target_sources(OMVLL PRIVATE
+target_sources(ChaosAndroid PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/StringEncoding.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/Routines.cpp
 )

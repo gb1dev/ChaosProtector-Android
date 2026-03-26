@@ -47,12 +47,13 @@ It manipulates LLVM IR, not raw ARM64 instructions. LLVM handles all architectur
 ## What We Add
 
 ### Phase 1: Rebrand + Licensing + Simplify Config
-- [ ] Rename from O-MVLL to ChaosProtector Android
-- [ ] Add ChaosProtector licensing (HWID + RSA verification)
-- [ ] Tier gating: Free (string enc + renaming), Basic (+ CFF + opaque), Pro (all)
-- [ ] Simplified YAML config (no Python required for basic usage)
-- [ ] Gradle plugin for one-line integration
-- [ ] Build for Windows x64 + Linux x64 + macOS ARM64
+- [x] Rename from O-MVLL to ChaosProtector Android
+- [x] Add ChaosProtector licensing (HWID + RSA verification)
+- [x] Tier gating: Free (string enc + anti-hook), Basic (+ CFF + opaque + arith), Pro (all)
+- [x] Simplified YAML config (no Python required for basic usage)
+- [x] Gradle plugin for one-line integration
+- [x] Build on Linux x64 (tested with LLVM 17, 17/17 tests pass, 51x IR complexity increase)
+- [ ] Build for Windows x64 + macOS ARM64
 
 ### Phase 2: New Passes
 - [ ] Anti-Tamper: CRC32 integrity check of .text at runtime

@@ -6,14 +6,14 @@
 #include "llvm/Demangle/Demangle.h"
 #include "llvm/IR/Module.h"
 
-#include "omvll/log.hpp"
-#include "omvll/utils.hpp"
-#include "omvll/passes/cleaning/Cleaning.hpp"
-#include "omvll/omvll_config.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/utils.hpp"
+#include "chaos_android/passes/cleaning/Cleaning.hpp"
+#include "chaos_android/chaos_config.hpp"
 
 using namespace llvm;
 
-namespace omvll {
+namespace chaos_android {
 
 PreservedAnalyses Cleaning::run(Module &M, ModuleAnalysisManager &FAM) {
   if (!Config.Cleaning)
@@ -51,4 +51,4 @@ PreservedAnalyses Cleaning::run(Module &M, ModuleAnalysisManager &FAM) {
   return Changed ? PreservedAnalyses::none() : PreservedAnalyses::all();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

@@ -14,22 +14,22 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
 
-#include "omvll/log.hpp"
-#include "omvll/omvll_config.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/chaos_config.hpp"
+#include "chaos_android/utils.hpp"
 
-namespace omvll {
+namespace chaos_android {
 
 static std::mutex BindLog;
 thread_local std::shared_ptr<spdlog::logger> Logger::Current;
 
-static constexpr auto LogsRootDir = "omvll-logs";
-static constexpr auto ModuleLogsDir = "omvll-module-logs";
-static constexpr auto InitLogFileName = "omvll-init.log";
-static constexpr auto DefaultLoggerKey = "omvll-default-shared";
+static constexpr auto LogsRootDir = "chaos-android-logs";
+static constexpr auto ModuleLogsDir = "chaos-android-module-logs";
+static constexpr auto InitLogFileName = "chaos-android-init.log";
+static constexpr auto DefaultLoggerKey = "chaos-android-default-shared";
 
 static inline bool shouldTruncate() {
-  static constexpr auto LogEnvVar = "OMVLL_TRUNCATE_LOG";
+  static constexpr auto LogEnvVar = "CHAOS_ANDROID_TRUNCATE_LOG";
   return std::getenv(LogEnvVar);
 }
 
@@ -70,7 +70,7 @@ static std::string makeKey(const std::string &Module) {
 static std::string makeLogPath(const std::string &Module,
                                const std::string &Arch) {
   const auto &File =
-      basename(Module) + "-omvll-" + std::to_string(getPid()) + ".log";
+      basename(Module) + "-chaos-" + std::to_string(getPid()) + ".log";
   std::filesystem::path FinalPath =
       getLogsRootDir() / std::filesystem::path(ModuleLogsDir) / Arch / File;
   std::filesystem::create_directories(FinalPath.parent_path());
@@ -189,4 +189,4 @@ void Logger::SetLevel(spdlog::level::level_enum L) {
   });
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

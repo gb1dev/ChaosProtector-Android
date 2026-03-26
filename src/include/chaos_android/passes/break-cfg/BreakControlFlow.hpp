@@ -1,0 +1,31 @@
+#pragma once
+
+//
+// This file is distributed under the Apache License v2.0. See LICENSE for
+// details.
+//
+
+#include "llvm/IR/PassManager.h"
+
+// Forward declarations
+namespace llvm {
+class Function;
+class RandomNumberGenerator;
+class BasicBlock;
+} // end namespace llvm
+
+namespace chaos_android {
+
+class Jitter;
+
+// See https://obfuscator.re/chaos_android/passes/control-flow-breaking/ for details.
+struct BreakControlFlow : llvm::PassInfoMixin<BreakControlFlow> {
+  llvm::PreservedAnalyses run(llvm::Module &M,
+                              llvm::ModuleAnalysisManager &FAM);
+
+  bool runOnFunction(llvm::Function &F);
+
+  std::unique_ptr<Jitter> JIT;
+};
+
+} // end namespace chaos_android

@@ -9,17 +9,17 @@
 #include "llvm/IR/IntrinsicInst.h"
 #include "llvm/Transforms/Utils/CodeExtractor.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/log.hpp"
-#include "omvll/passes/function-outline/FunctionOutline.hpp"
-#include "omvll/passes/function-outline/FunctionOutlineOpt.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/function-outline/FunctionOutline.hpp"
+#include "chaos_android/passes/function-outline/FunctionOutlineOpt.hpp"
+#include "chaos_android/utils.hpp"
 
 using namespace llvm;
-using namespace omvll;
+using namespace chaos_android;
 
-namespace omvll {
+namespace chaos_android {
 
 static bool isStackFrameDependentIntrinsic(Intrinsic::ID ID) {
   switch (ID) {
@@ -203,7 +203,7 @@ PreservedAnalyses FunctionOutline::run(Module &M, ModuleAnalysisManager &MAM) {
 
     auto *P = std::get_if<FunctionOutlineWithProbability>(&Opt);
     if (P && !isFunctionGloballyExcluded(&F) && !F.isDeclaration() &&
-        !F.isIntrinsic() && !F.getName().starts_with("__omvll") &&
+        !F.isIntrinsic() && !F.getName().starts_with("__chaos") &&
         !isCoroutine(&F))
       ToVisit.emplace_back(&F, P->Probability);
   }
@@ -238,4 +238,4 @@ PreservedAnalyses FunctionOutline::run(Module &M, ModuleAnalysisManager &MAM) {
   return Changed ? PreservedAnalyses::none() : PreservedAnalyses::all();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

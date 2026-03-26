@@ -2,15 +2,15 @@
 # This file is distributed under the Apache License v2.0. See LICENSE for details.
 #
 
-import omvll
+import chaos_android
 from functools import lru_cache
 
-class MyConfig(omvll.ObfuscationConfig):
+class MyConfig(chaos_android.ObfuscationConfig):
     def __init__(self):
         super().__init__()
-    def break_control_flow(self, mod: omvll.Module, func: omvll.Function):
+    def break_control_flow(self, mod: chaos_android.Module, func: chaos_android.Function):
         return True
 
 @lru_cache(maxsize=1)
-def omvll_get_config() -> omvll.ObfuscationConfig:
+def chaos_get_config() -> chaos_android.ObfuscationConfig:
     return MyConfig()

@@ -1,3 +1,3 @@
-target_sources(OMVLL PRIVATE
+target_sources(ChaosAndroid PRIVATE
   LoggerBind.cpp
 )

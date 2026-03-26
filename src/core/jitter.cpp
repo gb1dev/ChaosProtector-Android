@@ -21,14 +21,14 @@
 #include "llvm/TargetParser/Host.h"
 #include "llvm/Transforms/Utils/Cloning.h"
 
-#include "omvll/jitter.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/jitter.hpp"
+#include "chaos_android/utils.hpp"
 
 #include <spdlog/fmt/fmt.h>
 
 using namespace llvm;
 
-static constexpr auto AsmFunctionName = "__omvll_asm_func";
+static constexpr auto AsmFunctionName = "__chaos_asm_func";
 
 namespace llvm {
 namespace object {
@@ -36,7 +36,7 @@ class MachOObjectFile;
 } // end namespace object
 } // end namespace llvm
 
-namespace omvll {
+namespace chaos_android {
 
 bool Jitter::HasArchTargetInitialized = false;
 
@@ -141,7 +141,7 @@ std::unique_ptr<MemoryBuffer> Jitter::jitAsm(const std::string &Asm,
   static ExitOnError ExitOnErr;
 
   auto Context = std::make_unique<LLVMContext>();
-  auto M = std::make_unique<Module>("__omvll_asm_jit", *Context);
+  auto M = std::make_unique<Module>("__chaos_asm_jit", *Context);
 
   Function *F =
       Function::Create(FunctionType::get(Type::getVoidTy(*Context), {}, false),
@@ -202,4 +202,4 @@ std::unique_ptr<MemoryBuffer> Jitter::jitAsm(const std::string &Asm,
   fatalError("Cannot compile " + Asm);
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

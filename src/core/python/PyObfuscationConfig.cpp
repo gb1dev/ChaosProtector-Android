@@ -10,8 +10,8 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Module.h"
 
-#include "omvll/log.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/utils.hpp"
 
 #include "PyObfuscationConfig.hpp"
 
@@ -20,7 +20,7 @@ namespace detail = py::detail;
 
 using namespace std::string_literals;
 
-namespace omvll {
+namespace chaos_android {
 
 StringEncodingOpt PyObfuscationConfig::obfuscateString(llvm::Module *M,
                                                        llvm::Function *F,
@@ -502,4 +502,4 @@ bool PyObfuscationConfig::defaultConfig(
   }
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

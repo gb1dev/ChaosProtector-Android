@@ -27,11 +27,11 @@
 #include "llvm/Transforms/Utils/Cloning.h"
 #include "llvm/Transforms/Utils/Local.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/log.hpp"
-#include "omvll/omvll_config.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/chaos_config.hpp"
+#include "chaos_android/utils.hpp"
 
 using namespace llvm;
 
@@ -142,11 +142,11 @@ runClangExecutable(StringRef Code, StringRef Dashx, const Triple &Triple,
 
   // Create the input C file and choose macthing output file name.
   SmallString<256> WorkDir;
-  if (!omvll::Config.OutputFolder.empty()) {
-    WorkDir = omvll::Config.OutputFolder;
+  if (!chaos_android::Config.OutputFolder.empty()) {
+    WorkDir = chaos_android::Config.OutputFolder;
   } else {
     sys::fs::current_path(WorkDir);
-    sys::path::append(WorkDir, "omvll-tmp");
+    sys::path::append(WorkDir, "chaos-android-tmp");
   }
   sys::path::append(WorkDir, "cache");
   sys::fs::create_directories(WorkDir);
@@ -154,7 +154,7 @@ runClangExecutable(StringRef Code, StringRef Dashx, const Triple &Triple,
   // Create input file.
   int InFileFD = -1;
   SmallString<256> InFileName;
-  std::string Prefix = "omvll-cache-" + Triple.getTriple();
+  std::string Prefix = "chaos-android-cache-" + Triple.getTriple();
 
   // Generate Template with the expected name.
   SmallString<256> Template(WorkDir);
@@ -205,7 +205,7 @@ static Expected<std::unique_ptr<Module>> loadModule(StringRef Path,
 
 } // end namespace detail
 
-namespace omvll {
+namespace chaos_android {
 
 unsigned getPid() { return ::getpid(); }
 
@@ -486,12 +486,12 @@ generateModule(StringRef Routine, const Triple &Triple, StringRef Extension,
     TempPath = Config.OutputFolder;
   } else {
     sys::fs::current_path(TempPath);
-    sys::path::append(TempPath, "omvll-tmp");
+    sys::path::append(TempPath, "chaos-android-tmp");
   }
 
   sys::path::append(TempPath, "cache");
   llvm::sys::fs::create_directories(TempPath);
-  sys::path::append(TempPath, "omvll-cache-" + Triple.getTriple() + "-" +
+  sys::path::append(TempPath, "chaos-android-cache-" + Triple.getTriple() + "-" +
                                   std::to_string(HashValue) + "-" +
                                   std::to_string(getPid()) + ".ll");
   std::string IRModuleFilename = std::string(TempPath.str());
@@ -645,4 +645,4 @@ void inlineWithoutLifetimeMarkers(CallInst *Call) {
     fatalError(Result.getFailureReason());
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

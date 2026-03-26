@@ -6,10 +6,10 @@
 #include "llvm/IR/Module.h"
 #include "llvm/TargetParser/Triple.h"
 
-#include "omvll/log.hpp"
-#include "omvll/passes/logger-bind/LoggerBind.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/logger-bind/LoggerBind.hpp"
 
-namespace omvll {
+namespace chaos_android {
 
 llvm::PreservedAnalyses LoggerBind::run(llvm::Module &M,
                                         llvm::ModuleAnalysisManager &) {
@@ -23,4 +23,4 @@ llvm::PreservedAnalyses LoggerBind::run(llvm::Module &M,
   return llvm::PreservedAnalyses::all();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

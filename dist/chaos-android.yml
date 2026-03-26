@@ -1,0 +1,34 @@
+# ChaosProtector Android - Configuration
+# Place this file in your project root (next to CMakeLists.txt or build.gradle)
+
+# License key (optional, Free tier if omitted)
+# license_key: CP-XXXX-XXXX-XXXX-XXXX
+
+# Protections to enable
+protections:
+  string_encryption: true
+  control_flow_flattening: true
+  opaque_constants: true
+  arithmetic: true
+  anti_hook: true
+  indirect_branch: false
+  indirect_call: false
+  break_control_flow: false
+  basic_block_duplicate: false
+  function_outline: false
+  opaque_field_access: false
+
+# Functions to exclude from obfuscation (supports wildcards)
+exclude:
+  - "JNI_OnLoad"
+  - "JNI_OnUnload"
+  # - "Java_*"  # Skip all JNI bridge functions
+
+# Functions to include (if set, ONLY these are obfuscated)
+# include:
+#   - "verify_license"
+#   - "decrypt_payload"
+#   - "check_integrity"
+
+# Probability for probabilistic passes (0-100)
+probability: 50

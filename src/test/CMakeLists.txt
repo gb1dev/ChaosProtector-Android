@@ -16,7 +16,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/lit.site.cfg.py.in"
 
 set(LLVM_LIT_ARGS "-vv --no-progress-bar --show-xfail --show-unsupported")
 
-add_lit_testsuite(check "Running O-MVLL regression tests"
+add_lit_testsuite(check "Running ChaosProtector Android regression tests"
   ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS OMVLL ${LLVM_TEST_DEPENDS}
+  DEPENDS ChaosAndroid ${LLVM_TEST_DEPENDS}
 )

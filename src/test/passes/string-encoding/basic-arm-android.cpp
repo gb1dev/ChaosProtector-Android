@@ -10,14 +10,14 @@
 //     CHECK-DEFAULT: [[FILE_NAME]]
 
 // The 'remove' configuration overwrites it with the fixed REDACTED literal:
-//     RUN: env OMVLL_CONFIG=%S/config_remove.py clang++ -fpass-plugin=%libOMVLL \
+//     RUN: env CHAOS_ANDROID_CONFIG=%S/config_remove.py clang++ -fpass-plugin=%libChaosAndroid \
 //     RUN:         -target arm-linux-android -O1 -c %s -o - | strings | FileCheck --check-prefix=CHECK-REMOVED  -DFILE_NAME=%s %s
 //
 //     CHECK-REMOVED-NOT: [[FILE_NAME]]
 //     CHECK-REMOVED:     REDACTED
 
 // The 'replace' configuration encodes the string and adds logic that decodes it at load-time:
-//     RUN: env OMVLL_CONFIG=%S/config_replace.py clang++ -fpass-plugin=%libOMVLL \
+//     RUN: env CHAOS_ANDROID_CONFIG=%S/config_replace.py clang++ -fpass-plugin=%libChaosAndroid \
 //     RUN:         -target arm-linux-android -O1 -c %s -o - | strings | FileCheck --check-prefix=CHECK-REPLACED -DFILE_NAME=%s %s
 //
 //     CHECK-REPLACED-NOT: [[FILE_NAME]]

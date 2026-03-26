@@ -8,15 +8,15 @@
 #include "llvm/IR/NoFolder.h"
 #include "llvm/Support/RandomNumberGenerator.h"
 
-#include "omvll/passes/Metadata.hpp"
-#include "omvll/passes/opaque-constants/OpaqueConstants.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/passes/Metadata.hpp"
+#include "chaos_android/passes/opaque-constants/OpaqueConstants.hpp"
+#include "chaos_android/utils.hpp"
 
 #include "GenOpaque.hpp"
 
 using namespace llvm;
 
-namespace omvll {
+namespace chaos_android {
 
 static Value *attachMDOpaqueCst(Value *I) {
   addMetadata(*cast<Instruction>(I), MetaObf(MetaObfTy::OpaqueCst, 3ULL));
@@ -121,4 +121,4 @@ Value *getOpaqueConst3(Instruction &I, OpaqueContext &Ctx,
   return getOpaqueConst1(I, Ctx, CI);
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

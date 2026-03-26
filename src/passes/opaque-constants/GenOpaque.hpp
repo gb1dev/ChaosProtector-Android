@@ -15,7 +15,7 @@ class RandomNumberGenerator;
 class Type;
 } // end namespace llvm
 
-namespace omvll {
+namespace chaos_android {
 
 struct OpaqueContext;
 
@@ -43,4 +43,4 @@ llvm::Value *getOpaqueConst2(llvm::Instruction &I, OpaqueContext &Ctx,
 llvm::Value *getOpaqueConst3(llvm::Instruction &I, OpaqueContext &Ctx,
                              const llvm::ConstantInt &Val);
 
-} // end namespace omvll
+} // end namespace chaos_android

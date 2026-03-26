@@ -2,56 +2,67 @@ cmake_minimum_required(VERSION 3.15)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
-# O-MVLL Versioning from Git (if available)
+# ChaosProtector Android Versioning from Git (if available)
 if(EXISTS       "${CMAKE_CURRENT_SOURCE_DIR}/../.git" AND
    IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../.git")
   find_package(Git REQUIRED)
   include(GitInfo)
 else()
-  set(OMVLL_VERSION_MAJOR "1")
-  set(OMVLL_VERSION_MINOR "4")
-  set(OMVLL_VERSION_PATCH "1")
+  set(ChaosAndroid_VERSION_MAJOR "2")
+  set(ChaosAndroid_VERSION_MINOR "0")
+  set(ChaosAndroid_VERSION_PATCH "0")
 endif()
 
-project(OMVLL
-        VERSION ${OMVLL_VERSION_MAJOR}.${OMVLL_VERSION_MINOR}.${OMVLL_VERSION_PATCH})
+project(ChaosAndroid
+        VERSION ${ChaosAndroid_VERSION_MAJOR}.${ChaosAndroid_VERSION_MINOR}.${ChaosAndroid_VERSION_PATCH})
 message(STATUS "${PROJECT_NAME}: ${PROJECT_VERSION}")
 
-option(OMVLL_FORCE_LOG_DEBUG "Force the log debug output" OFF)
-option(OMVLL_PY_STANDALONE   "Build OMVLL as a standalone Python module" OFF)
+option(ChaosAndroid_FORCE_LOG_DEBUG "Force the log debug output" OFF)
+option(ChaosAndroid_PY_STANDALONE   "Build ChaosAndroid as a standalone Python module" OFF)
 
 if(APPLE)
-  set(OMVLL_DEFAULT_ABI "Apple")
+  set(ChaosAndroid_DEFAULT_ABI "Apple")
 else()
-  set(OMVLL_DEFAULT_ABI "Android")
+  set(ChaosAndroid_DEFAULT_ABI "Android")
 endif()
 
-set(OMVLL_ABI "${OMVLL_DEFAULT_ABI}" CACHE STRING
-  "Compiler ABI to build OMVLL against. Supported options are \"Apple\" and \"Android\". Defaults to ${OMVLL_DEFAULT_ABI}.")
+set(ChaosAndroid_ABI "${ChaosAndroid_DEFAULT_ABI}" CACHE STRING
+  "Compiler ABI to build ChaosAndroid against. Supported options are \"Apple\" and \"Android\". Defaults to ${ChaosAndroid_DEFAULT_ABI}.")
 
-if(OMVLL_ABI STREQUAL "Apple")
+if(ChaosAndroid_ABI STREQUAL "Apple")
   set(LLVM_REQUIRED_VERSION 19.1.4)
-elseif(OMVLL_ABI STREQUAL "Android")
+  set(LLVM_EXACT_MATCH TRUE)
+elseif(ChaosAndroid_ABI STREQUAL "Android")
   set(LLVM_REQUIRED_VERSION 17)
+  set(LLVM_EXACT_MATCH FALSE)
 else()
-  # TODO: switch Linux build to release NDK
-  set(LLVM_REQUIRED_VERSION 17.0.2)
+  # Linux host build: accept any LLVM 17.x
+  set(LLVM_REQUIRED_VERSION 17)
+  set(LLVM_EXACT_MATCH FALSE)
 endif()
 
-find_package(LLVM ${LLVM_REQUIRED_VERSION} REQUIRED CONFIG NO_DEFAULT_PATH)
+# Try configured path first, then system
+find_package(LLVM ${LLVM_REQUIRED_VERSION} CONFIG)
+if(NOT LLVM_FOUND)
+  find_package(LLVM ${LLVM_REQUIRED_VERSION} REQUIRED CONFIG)
+endif()
 
 set(PYTHON_VERSION "3" CACHE STRING "Python version")
 find_package(Python3 COMPONENTS Development Interpreter)
 
 find_package(spdlog REQUIRED CONFIG)
-find_package(pybind11 REQUIRED CONFIG NO_DEFAULT_PATH)
+# Try configured path first, then system
+find_package(pybind11 CONFIG)
+if(NOT pybind11_FOUND)
+  find_package(pybind11 REQUIRED CONFIG)
+endif()
 
 message(STATUS "Python version: ${Python3_VERSION}")
 message(STATUS "Python lib:     ${Python3_LIBRARIES}")
 message(STATUS "Python include: ${Python3_INCLUDE_DIRS}")
 message(STATUS "Python interpreter: ${Python3_EXECUTABLE}")
 
-if(NOT "${LLVM_PACKAGE_VERSION}" VERSION_EQUAL "${LLVM_REQUIRED_VERSION}")
+if(LLVM_EXACT_MATCH AND NOT "${LLVM_PACKAGE_VERSION}" VERSION_EQUAL "${LLVM_REQUIRED_VERSION}")
   message(FATAL_ERROR "Found LLVM ${LLVM_PACKAGE_VERSION}, but need LLVM ${LLVM_REQUIRED_VERSION}")
 endif()
 
@@ -78,25 +89,25 @@ endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fdiagnostics-color=always")
 
-set(OMVLL_DEBUG 0)
+set(ChaosAndroid_DEBUG 0)
 if(CMAKE_BUILD_TYPE MATCHES Release)
-  if(OMVLL_FORCE_LOG_DEBUG)
-    set(OMVLL_DEBUG 1)
+  if(ChaosAndroid_FORCE_LOG_DEBUG)
+    set(ChaosAndroid_DEBUG 1)
   endif()
 else()
-  set(OMVLL_DEBUG 1)
+  set(ChaosAndroid_DEBUG 1)
 endif()
 
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/omvll/config.hpp.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/include/omvll/config.hpp")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/chaos_android/config.hpp.in"
+               "${CMAKE_CURRENT_BINARY_DIR}/include/chaos_android/config.hpp")
 
-add_library(OMVLL SHARED)
+add_library(ChaosAndroid SHARED)
 
-set_target_properties(OMVLL
+set_target_properties(ChaosAndroid
   PROPERTIES
   POSITION_INDEPENDENT_CODE ON
 )
-target_include_directories(OMVLL
+target_include_directories(ChaosAndroid
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_BINARY_DIR}/include
@@ -104,17 +115,17 @@ target_include_directories(OMVLL
     ${Python3_INCLUDE_DIRS}
 )
 
-target_compile_options(OMVLL PUBLIC
+target_compile_options(ChaosAndroid PUBLIC
   -fdata-sections
   -ffunction-sections
   -fvisibility-inlines-hidden -fvisibility=hidden
 )
 
-target_compile_options(OMVLL PUBLIC
+target_compile_options(ChaosAndroid PUBLIC
   -fno-rtti
 )
 
-target_compile_definitions(OMVLL
+target_compile_definitions(ChaosAndroid
   PRIVATE
     SPDLOG_DISABLE_DEFAULT_LOGGER
     SPDLOG_FUNCTION=
@@ -122,36 +133,37 @@ target_compile_definitions(OMVLL
     SPDLOG_NO_THREAD_ID
 )
 
-set(OMVLL_LINK_OPT
+set(ChaosAndroid_LINK_OPT
   #-fuse-ld=gold
 )
 
 if(NOT APPLE)
-  list(APPEND OMVLL_LINK_OPT
+  list(APPEND ChaosAndroid_LINK_OPT
     -Wl,-as-needed
     -Wl,--gc-sections
     -Wl,--exclude-libs,ALL
+    -Wl,--version-script=${CMAKE_CURRENT_SOURCE_DIR}/exports_linux.map
     -fuse-ld=gold
   )
 endif()
 
 if(APPLE)
-  list(APPEND OMVLL_LINK_OPT
+  list(APPEND ChaosAndroid_LINK_OPT
     -Wl,-flat_namespace
     -Wl,-exported_symbols_list,${CMAKE_CURRENT_SOURCE_DIR}/exports.txt
   )
 endif()
 
-target_link_options(OMVLL PUBLIC ${OMVLL_LINK_OPT})
+target_link_options(ChaosAndroid PUBLIC ${ChaosAndroid_LINK_OPT})
 
-target_link_libraries(OMVLL
+target_link_libraries(ChaosAndroid
   PRIVATE
     spdlog::spdlog pybind11::headers
     ${Python3_LIBRARIES}
 )
 
 if(NOT APPLE)
-  target_link_libraries(OMVLL
+  target_link_libraries(ChaosAndroid
     PRIVATE
     -static-libgcc
   )
@@ -182,10 +194,10 @@ if(APPLE)
   )
 endif()
 
-if (OMVLL_PY_STANDALONE)
+if (ChaosAndroid_PY_STANDALONE)
   find_package(Clang REQUIRED CONFIG NO_DEFAULT_PATH)
   include_directories(SYSTEM ${CLANG_INCLUDE_DIRS})
-  set_target_properties(OMVLL PROPERTIES PREFIX "" OUTPUT_NAME "omvll" CLEAN_DIRECT_OUTPUT 1)
+  set_target_properties(ChaosAndroid PROPERTIES PREFIX "" OUTPUT_NAME "chaos_android" CLEAN_DIRECT_OUTPUT 1)
   list(APPEND LLVM_LIBS_DEP
     core
     support
@@ -194,7 +206,7 @@ if (OMVLL_PY_STANDALONE)
     Option
     MCJIT
   )
-  target_link_libraries(OMVLL PRIVATE
+  target_link_libraries(ChaosAndroid PRIVATE
     clang
     clangBasic
     clangFrontend
@@ -207,21 +219,21 @@ llvm_map_components_to_libnames(llvm_libs
 )
 
 # TODO: double-check with NDK on Linux
-if(OMVLL_ABI STREQUAL "Android")
-  target_link_libraries(OMVLL PRIVATE LLVM)
+if(ChaosAndroid_ABI STREQUAL "Android")
+  target_link_libraries(ChaosAndroid PRIVATE LLVM)
 else()
-  target_link_libraries(OMVLL PRIVATE
+  target_link_libraries(ChaosAndroid PRIVATE
     ${llvm_libs}
   )
 endif()
 
-if(CMAKE_BUILD_TYPE MATCHES Release AND NOT OMVLL_FORCE_LOG_DEBUG)
+if(CMAKE_BUILD_TYPE MATCHES Release AND NOT ChaosAndroid_FORCE_LOG_DEBUG)
   if(APPLE)
   add_custom_command(
-    TARGET OMVLL
-    COMMENT "Strip O-MVLL"
+    TARGET ChaosAndroid
+    COMMENT "Strip ChaosProtector Android"
     POST_BUILD
-    COMMAND ${CMAKE_STRIP} -x -S $<TARGET_FILE:OMVLL>
+    COMMAND ${CMAKE_STRIP} -x -S $<TARGET_FILE:ChaosAndroid>
   )
   endif()
 endif()

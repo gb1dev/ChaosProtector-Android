@@ -14,17 +14,17 @@
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 #include "llvm/Transforms/Utils/Cloning.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/jitter.hpp"
-#include "omvll/log.hpp"
-#include "omvll/passes/Metadata.hpp"
-#include "omvll/passes/break-cfg/BreakControlFlow.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/jitter.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/Metadata.hpp"
+#include "chaos_android/passes/break-cfg/BreakControlFlow.hpp"
+#include "chaos_android/utils.hpp"
 
 using namespace llvm;
 
-namespace omvll {
+namespace chaos_android {
 
 static constexpr size_t AArch64InstSize = 4;
 static constexpr size_t AArch64FunctionAlignment =
@@ -245,7 +245,7 @@ PreservedAnalyses BreakControlFlow::run(Module &M, ModuleAnalysisManager &FAM) {
   std::vector<Function *> ToVisit;
   for (Function &F : M) {
     if (isFunctionGloballyExcluded(&F) || F.isDeclaration() ||
-        F.isIntrinsic() || F.getName().starts_with("__omvll"))
+        F.isIntrinsic() || F.getName().starts_with("__chaos"))
       continue;
 
     if (Config.getUserConfig()->breakControlFlow(&M, &F))
@@ -270,4 +270,4 @@ PreservedAnalyses BreakControlFlow::run(Module &M, ModuleAnalysisManager &FAM) {
   return (NumVisits > 0) ? PreservedAnalyses::none() : PreservedAnalyses::all();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

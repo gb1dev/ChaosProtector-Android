@@ -6,15 +6,15 @@
 #include "llvm/IR/Constants.h"
 #include "llvm/Support/Regex.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/log.hpp"
-#include "omvll/passes/objc-cleaner/ObjCleaner.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/objc-cleaner/ObjCleaner.hpp"
+#include "chaos_android/utils.hpp"
 
 using namespace llvm;
 
-namespace omvll {
+namespace chaos_android {
 
 inline bool isObjCVar(const GlobalVariable &G) {
   if (!G.hasName())
@@ -80,4 +80,4 @@ PreservedAnalyses ObjCleaner::run(Module &M, ModuleAnalysisManager &FAM) {
   return Changed ? PreservedAnalyses::none() : PreservedAnalyses::all();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

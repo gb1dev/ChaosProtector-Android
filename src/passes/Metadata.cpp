@@ -8,14 +8,14 @@
 #include "llvm/IR/Instruction.h"
 #include "llvm/IR/Instructions.h"
 
-#include "omvll/passes/Metadata.hpp"
-#include "omvll/visitvariant.hpp"
+#include "chaos_android/passes/Metadata.hpp"
+#include "chaos_android/visitvariant.hpp"
 
 using namespace llvm;
 
 static constexpr auto ObfKey = "obf";
 
-namespace omvll {
+namespace chaos_android {
 
 void addMetadata(Instruction &I, MetaObf M) {
   addMetadata(I, ArrayRef<MetaObf>(M));
@@ -109,4 +109,4 @@ bool hasObf(Instruction &I, MetaObfTy M) {
   return false;
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

@@ -7,16 +7,16 @@
 #include "llvm/IR/Constants.h"
 #include "llvm/Support/MemoryBuffer.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/jitter.hpp"
-#include "omvll/log.hpp"
-#include "omvll/passes/anti-hook/AntiHook.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/jitter.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/anti-hook/AntiHook.hpp"
+#include "chaos_android/utils.hpp"
 
 using namespace llvm;
 
-namespace omvll {
+namespace chaos_android {
 
 // Versions of Frida (as of 16.0.2) fail to hook functions that begin with
 // instructions using x16/x17 registers. These stubs are using these registers
@@ -97,4 +97,4 @@ PreservedAnalyses AntiHook::run(Module &M, ModuleAnalysisManager &FAM) {
   return Changed ? PreservedAnalyses::none() : PreservedAnalyses::all();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

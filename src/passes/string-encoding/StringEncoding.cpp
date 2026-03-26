@@ -30,24 +30,24 @@
 #include "llvm/Transforms/Utils/Local.h"
 #include "llvm/Transforms/Utils/ModuleUtils.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/jitter.hpp"
-#include "omvll/log.hpp"
-#include "omvll/passes/Metadata.hpp"
-#include "omvll/passes/arithmetic/Arithmetic.hpp"
-#include "omvll/passes/string-encoding/StringEncoding.hpp"
-#include "omvll/utils.hpp"
-#include "omvll/visitvariant.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/jitter.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/Metadata.hpp"
+#include "chaos_android/passes/arithmetic/Arithmetic.hpp"
+#include "chaos_android/passes/string-encoding/StringEncoding.hpp"
+#include "chaos_android/utils.hpp"
+#include "chaos_android/visitvariant.hpp"
 
 using namespace llvm;
 
 static ExitOnError ExitOnErr;
 
-static constexpr auto DecodeFunctionName = "__omvll_decode";
-static constexpr auto CtorPrefixName = "__omvll_ctor_";
+static constexpr auto DecodeFunctionName = "__chaos_decode";
+static constexpr auto CtorPrefixName = "__chaos_ctor_";
 
-namespace omvll {
+namespace chaos_android {
 
 inline bool isEligible(const GlobalVariable &G) {
   if (G.isNullValue() || G.isZeroValue())
@@ -215,7 +215,7 @@ CallInst *StringEncoding::createDecodingTrampoline(
                          IRB.getInt64Ty(), IRB.getInt32Ty()},
                         false);
   auto *Wrapper = Function::Create(WrapperType, GlobalValue::PrivateLinkage,
-                                   "__omvll_decode_wrap", M);
+                                   "__chaos_decode_wrap", M);
 
   // Decode wrapper to check whether the global variable has already been
   // decoded.
@@ -685,4 +685,4 @@ bool StringEncoding::processLocal(Instruction &I, Use &Op, GlobalVariable &G,
                                It->getSecond());
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

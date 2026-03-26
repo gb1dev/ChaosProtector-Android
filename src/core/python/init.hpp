@@ -9,10 +9,10 @@
 #include <pybind11/stl.h>
 #include <pybind11/operators.h>
 
-namespace omvll {
+namespace chaos_android {
 
 pybind11::module_ &py_init_log(pybind11::module_ &M);
 pybind11::module_ &py_init_llvm_bindings(pybind11::module_ &M);
 pybind11::module_ &py_init_obf_opt(pybind11::module_ &M);
 
-} // end namespace omvll
+} // end namespace chaos_android

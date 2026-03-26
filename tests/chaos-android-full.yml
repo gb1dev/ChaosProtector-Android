@@ -1,0 +1,18 @@
+# Full protection config (simulating Pro tier)
+protections:
+  string_encryption: true
+  control_flow_flattening: true
+  opaque_constants: true
+  arithmetic: true
+  anti_hook: true
+  indirect_branch: true
+  indirect_call: true
+  break_control_flow: true
+  basic_block_duplicate: true
+  function_outline: true
+  opaque_field_access: true
+
+exclude:
+  - "main"
+
+probability: 30

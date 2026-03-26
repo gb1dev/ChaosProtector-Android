@@ -1,0 +1,4 @@
+# Build artifacts
+test_basic_*
+*.ll
+chaos-android-logs/

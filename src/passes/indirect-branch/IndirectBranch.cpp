@@ -15,17 +15,17 @@
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/Instructions.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/log.hpp"
-#include "omvll/passes/indirect-branch/IndirectBranch.hpp"
-#include "omvll/passes/indirect-branch/IndirectBranchOpt.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/indirect-branch/IndirectBranch.hpp"
+#include "chaos_android/passes/indirect-branch/IndirectBranchOpt.hpp"
+#include "chaos_android/utils.hpp"
 
 using namespace llvm;
-using namespace omvll;
+using namespace chaos_android;
 
-namespace omvll {
+namespace chaos_android {
 
 bool IndirectBranch::process(Function &F, const DataLayout &DL,
                              LLVMContext &Ctx) {
@@ -158,7 +158,7 @@ PreservedAnalyses IndirectBranch::run(Module &M, ModuleAnalysisManager &MAM) {
 
     if (isFunctionGloballyExcluded(&F) ||
         F.hasFnAttribute(Attribute::AlwaysInline) || F.isDeclaration() ||
-        F.isIntrinsic() || F.getName().starts_with("__omvll"))
+        F.isIntrinsic() || F.getName().starts_with("__chaos"))
       continue;
 
     Changed |= process(F, DL, Ctx);
@@ -170,4 +170,4 @@ PreservedAnalyses IndirectBranch::run(Module &M, ModuleAnalysisManager &MAM) {
   return Changed ? PreservedAnalyses::none() : PreservedAnalyses::all();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

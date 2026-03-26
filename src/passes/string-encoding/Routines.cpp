@@ -3,7 +3,7 @@
 // details.
 //
 
-#include "omvll/passes/string-encoding/Routines.h"
+#include "chaos_android/passes/string-encoding/Routines.h"
 #include <cassert>
 
 namespace {
@@ -27,7 +27,7 @@ const char *DecodeRoutines[] = {
   )delim",
 };
 
-omvll::EncRoutineFn *EncodeRoutines[] = {
+chaos_android::EncRoutineFn *EncodeRoutines[] = {
     [](char *out, const char *in, unsigned long long key, int size) {
       unsigned char *raw_key = (unsigned char *)(&key);
       for (int i = 0; i < size; ++i) {
@@ -43,7 +43,7 @@ omvll::EncRoutineFn *EncodeRoutines[] = {
 
 } // end anonymous namespace
 
-namespace omvll {
+namespace chaos_android {
 
 template <typename T, unsigned N>
 static constexpr unsigned arraySize(const T (&)[N]) noexcept {
@@ -65,4 +65,4 @@ const char *getDecodeRoutine(unsigned Idx) {
   return DecodeRoutines[Idx];
 }
 
-} // end namespace omvll
+} // end namespace chaos_android

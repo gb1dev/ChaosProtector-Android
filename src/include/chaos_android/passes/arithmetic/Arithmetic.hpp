@@ -1,0 +1,39 @@
+#pragma once
+
+//
+// This file is distributed under the Apache License v2.0. See LICENSE for
+// details.
+//
+
+#include "llvm/IR/PassManager.h"
+#include "llvm/IR/InstVisitor.h"
+#include "llvm/ADT/DenseMap.h"
+
+#include "chaos_android/passes/arithmetic/ArithmeticOpt.hpp"
+
+// Forward declarations
+namespace llvm {
+class Function;
+class Module;
+class Value;
+class BinaryOperator;
+} // end namespace llvm
+
+namespace chaos_android {
+
+// See https://obfuscator.re/chaos_android/passes/arithmetic/ for details.
+struct Arithmetic : llvm::PassInfoMixin<Arithmetic> {
+  llvm::PreservedAnalyses run(llvm::Module &M,
+                              llvm::ModuleAnalysisManager &FAM);
+  bool runOnBasicBlock(llvm::BasicBlock &BB);
+
+  llvm::Function *injectFunWrapper(llvm::Module &M, llvm::BinaryOperator &Op,
+                                   llvm::Value &Lhs, llvm::Value &Rhs);
+
+  static bool isSupported(const llvm::BinaryOperator &Op);
+
+private:
+  llvm::DenseMap<llvm::Function *, ArithmeticOpt> Opts;
+};
+
+} // end namespace chaos_android

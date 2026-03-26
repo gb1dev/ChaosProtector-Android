@@ -7,17 +7,17 @@
 #include "llvm/IR/InstIterator.h"
 #include "llvm/IR/Instructions.h"
 
-#include "omvll/ObfuscationConfig.hpp"
-#include "omvll/PyConfig.hpp"
-#include "omvll/log.hpp"
-#include "omvll/passes/indirect-call/IndirectCall.hpp"
-#include "omvll/passes/indirect-call/IndirectCallOpt.hpp"
-#include "omvll/utils.hpp"
+#include "chaos_android/ObfuscationConfig.hpp"
+#include "chaos_android/PyConfig.hpp"
+#include "chaos_android/log.hpp"
+#include "chaos_android/passes/indirect-call/IndirectCall.hpp"
+#include "chaos_android/passes/indirect-call/IndirectCallOpt.hpp"
+#include "chaos_android/utils.hpp"
 
 using namespace llvm;
-using namespace omvll;
+using namespace chaos_android;
 
-namespace omvll {
+namespace chaos_android {
 
 static uint32_t getRandomShareAligned() {
   size_t Max = std::numeric_limits<uint32_t>::max();
@@ -118,7 +118,7 @@ PreservedAnalyses IndirectCall::run(Module &M, ModuleAnalysisManager &MAM) {
       continue;
 
     if (isFunctionGloballyExcluded(&F) || F.isDeclaration() ||
-        F.isIntrinsic() || F.getName().starts_with("__omvll"))
+        F.isIntrinsic() || F.getName().starts_with("__chaos"))
       continue;
 
     Changed |= process(F, DL, Ctx);
@@ -130,4 +130,4 @@ PreservedAnalyses IndirectCall::run(Module &M, ModuleAnalysisManager &MAM) {
   return Changed ? PreservedAnalyses::none() : PreservedAnalyses::all();
 }
 
-} // end namespace omvll
+} // end namespace chaos_android
